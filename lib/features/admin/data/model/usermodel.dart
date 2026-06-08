@@ -13,6 +13,35 @@ class UserModel extends UserEntity {
     super.companyName,
   });
 
+  @override
+  UserModel copyWith({
+    String? id,
+    String? name,
+    String? username,
+    String? email,
+    String? phone,
+    bool? isApproved,
+    String? role,
+    DateTime? createdAt,
+    String? profileImage,
+    String? companyName,
+    UserStatus? status,
+  }) {
+    return UserModel(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      username: username ?? this.username,
+      email: email ?? this.email,
+      phone: phone ?? this.phone,
+      isApproved: status != null
+          ? (status == UserStatus.approved)
+          : (isApproved ?? this.isApproved),
+      role: role ?? this.role,
+      createdAt: createdAt ?? this.createdAt,
+      companyName: companyName ?? this.companyName,
+    );
+  }
+
   factory UserModel.fromJson(Map<String, dynamic> json) {
     return UserModel(
       id: json['id']?.toString() ?? '',
@@ -25,7 +54,6 @@ class UserModel extends UserEntity {
       createdAt: json['created_at'] != null
           ? (DateTime.tryParse(json['created_at']) ?? DateTime.now())
           : DateTime.now(),
-
       companyName: json['company_name'],
     );
   }

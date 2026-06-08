@@ -290,8 +290,8 @@ class _UserCardState extends State<UserCard>
     setState(() => _isActing = true);
     // After (fixed)
     final ok = await context.read<UserProvider>().approveUser(widget.user.id);
+    setState(() => _isActing = false);
     if (mounted) {
-      setState(() => _isActing = false);
       // Explicitly coerce to bool — null/void return treated as failure
       _showSnack(
         ok == true ? 'User approved successfully' : 'Failed to approve user',

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:invoice/features/admin/data/model/usermodel.dart';
 import 'package:invoice/features/admin/domain/entity/admin_entity.dart';
 import 'package:invoice/features/admin/domain/entity/dashboard_entity.dart';
 import 'package:invoice/features/admin/domain/entity/invoice_entity.dart';
@@ -72,8 +73,7 @@ class UserProvider extends ChangeNotifier {
       _users.where((u) => u.status == UserStatus.pending).length;
 
   List<UserEntity> get _filteredUsers {
-    var result = _users;
-
+    var result = _users.where((u) => u.role != 'admin').toList();
     // Apply status filter
     if (_filterStatus != 'All') {
       final status = UserStatus.values.firstWhere(
@@ -125,15 +125,20 @@ class UserProvider extends ChangeNotifier {
   }
 
   Future<bool> approveUser(String userId) async {
+    print("🔥 APPROVE CALLED: $userId");
     try {
       await _repo.approveUser(userId);
+      print("✅ REPO SUCCESS");
       final idx = _users.indexWhere((u) => u.id == userId);
       if (idx != -1) {
-        _users[idx] = _users[idx].copyWith(status: UserStatus.approved);
+        // ✅ Cast to UserModel before copyWith
+        final user = _users[idx] as UserModel;
+        _users[idx] = user.copyWith(status: UserStatus.approved);
       }
       notifyListeners();
       return true;
     } catch (e) {
+      print("❌ CAUGHT IN PROVIDER: $e");
       _error = e.toString();
       notifyListeners();
       return false;

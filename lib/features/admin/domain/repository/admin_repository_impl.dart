@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:invoice/core/constant/api_clints.dart';
 import 'package:invoice/features/admin/data/model/admin_item_model.dart';
 import 'package:invoice/features/admin/data/model/invoice_model.dart';
@@ -34,13 +35,24 @@ class AdminRepositoryImpl implements AdminRepository {
 
   @override
   Future<void> approveUser(String userId) async {
+    print("🔥 REPO APPROVE CALLED: $userId");
     try {
-      await ApiClient.dio.put(
+      final response = await ApiClient.dio.put(
         'approve-user/$userId/',
         data: {'is_approved': true},
       );
+      print("✅ STATUS: ${response.statusCode} | ${response.data}");
+    } on DioException catch (e) {
+      print(
+        "❌ DIO: type=${e.type} | status=${e.response?.statusCode} | data=${e.response?.data}",
+      );
+      final status = e.response?.statusCode;
+      if (status != null && status >= 200 && status < 300) {
+        return;
+      }
+      rethrow;
     } catch (e) {
-      print("ERROR APPROVING USER: $e");
+      print("❌ UNKNOWN: $e");
       rethrow;
     }
   }
