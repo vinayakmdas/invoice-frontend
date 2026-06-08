@@ -4,12 +4,13 @@ import 'package:invoice/features/user/data/model/invoice_data_model.dart';
 import 'package:invoice/features/user/data/model/item_data_model.dart';
 
 class UserApiDatasource {
-  static const String _base = 'https://invoice-backend-17pz.onrender.com/api/';
+  static const String _base = 'https://invoice-backend-17pz.onrender.com/api';
 
   // ── Items ──────────────────────────────────────────────────────────────────
 
   Future<List<ItemDataModel>> fetchItems() async {
-    final res = await http.get(Uri.parse('$_base/items/'));
+    final res = await http.get(Uri.parse('$_base/items'));
+    print("${res.statusCode == 200} data is fechitn 🚀🚀🚀🚀🚀");
     if (res.statusCode == 200) {
       final List data = jsonDecode(res.body);
       return data.map((e) => ItemDataModel.fromJson(e)).toList();
